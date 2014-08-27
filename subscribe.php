@@ -9,19 +9,28 @@ if($nieuwsbrief=='ja'){
 
 	// Send the request
 	$result = curl_exec($curl);
+
+	$curl_error = curl_error($curl);
+	
 	// Free up the resources $curl is using
 	curl_close($curl);
-
-	$check = explode('|',$result);
-
-	if($check[0]==1){
-		return true;
-	}elseif($check[0]==2){
-		return true;
+	
+	if(!empty($curl_error)){
+		//$hook->addError('nieuwsbrief',$error);
+		$modx->log(xPDO::LOG_LEVEL_ERROR,$error);
 	}else{
-		$hook->addError('nieuwsbrief',$check[1]);
-		return false;
+		$check = explode('|',$result);
+
+		if($check[0]==1){
+			return true;
+		}elseif($check[0]==2){
+			return true;
+		}else{
+			$hook->addError('nieuwsbrief',$check[1]);
+			return false;
+		}
 	}
+
 
 }else{
 	return true;
